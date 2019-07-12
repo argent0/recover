@@ -1,6 +1,6 @@
-A data type similar to 'Data.Validation' that recovers from errors.
+A data type similar to `Data.Validation` that recovers from errors.
 
-A @Recover e v@ contains a value @v@ or an error @e@ or both. This is
+A `Recover e v` contains a value `v` or an error `e` or both. This is
 similar to `Data.These`, but with a different `Applicative` instance.
 .
 Like `Data.Validation`, the `Applicative` instance of `Recover` enables the
