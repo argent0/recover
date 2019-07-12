@@ -63,17 +63,19 @@ recover :: Semigroup e => a -> Recover e a -> Recover e a
 recover a (Failure e) = Recover e a
 recover _ v = v
 
-fromEither :: Semigroup e => Either e v -> Recover e v
-fromEither (Left e) = Failure e
-fromEither (Right v) = Success v
+failFromEither :: Semigroup e => Either e v -> Recover e v
+failFromEither (Left e) = Failure e
+failFromEither (Right v) = Success v
+
+-- | Recover from single mode failure
+recoverFromEither :: Semigroup e => v -> Either e v -> Recover e v
+recoverFromEither v = recover v . failFromEither
 
 -- | Fail from single mode failure
-fromMaybe :: Semigroup e => e -> Maybe v -> Recover e v
-fromMaybe e = fromEither . maybeToRight e
-	where
-	maybeToRight e Nothing = Left e
-	maybeToRight _ (Just v) = Right v
+failFromMaybe :: Semigroup e => e -> Maybe v -> Recover e v
+failFromMaybe e Nothing = Failure e
+failFromMaybe _ (Just v) = Success v
 
 -- | Recover from single mode failure
 recoverFromMaybe :: Semigroup e => e -> v -> Maybe v -> Recover e v
-recoverFromMaybe e v = maybe (Recover e v) Success
+recoverFromMaybe e v = recover v . failFromMaybe e
