@@ -21,7 +21,7 @@ synopsis:	A data type similar to Data.Validation that recovers from errors.
 -- description:
 
 -- URL for the project homepage or repository.
-homepage:	foobar
+homepage:	https://github.com/argent0/recover
 
 -- A URL where users can report bugs.
 -- bug-reports:
