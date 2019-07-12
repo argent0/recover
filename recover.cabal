@@ -22,6 +22,7 @@ synopsis:	A data type similar to Data.Validation that recovers from errors.
 
 -- URL for the project homepage or repository.
 homepage:	https://github.com/argent0/recover
+bug-reports: https://github.com/argent0/recover/issues
 
 -- A URL where users can report bugs.
 -- bug-reports:
@@ -37,7 +38,7 @@ author:	Aner Lucero
 
 -- An email address to which users can send suggestions, bug reports, and
 -- patches.
-maintainer:	4rgento@gmail.com
+maintainer:	create a github issue
 
 -- A copyright notice.
 -- copyright:
