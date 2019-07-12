@@ -1,4 +1,6 @@
 {-# LANGUAGE DeriveFunctor #-}
+
+-- | A data type similar to 'Data.Validation' that recovers from errors.
 module Data.Recover
 	( Recover (..)
 	, ensure
@@ -17,16 +19,16 @@ import Data.Bifunctor (Bifunctor, bimap, first, second)
 -- Like `Data.Validation`, the `Applicative` instance of `Recover` enables the
 -- of validating various values while accumulating all the errors.
 --
--- >>> Foo <$> (Success a) <*> (Success b) == Success (Foo a b)
--- >>> Foo <$> (Failure e) <*> (Failure ee) == Failure (e <> ee)
--- >>> Foo <$> (Success a) <*> (Failure ee) == Failure e
+-- > Foo <$> (Success a) <*> (Success b) == Success (Foo a b)
+-- > Foo <$> (Failure e) <*> (Failure ee) == Failure (e <> ee)
+-- > Foo <$> (Success a) <*> (Failure ee) == Failure e
 --
 -- Unlike `Data.Validation`, `Recover` also has a constructor that represents
 -- the situation in which there were errors but a value could be nonetheless
 -- obtained.
 --
--- >>> Foo <$> (Recover e a) <*> (Success b) = Recover e (Foo a b)
--- >>> Foo <$> (Recover e a) <*> (Recover ee b) = Recover (e <> ee) (Foo a b)
+-- > Foo <$> (Recover e a) <*> (Success b) = Recover e (Foo a b)
+-- > Foo <$> (Recover e a) <*> (Recover ee b) = Recover (e <> ee) (Foo a b)
 data Recover e v
 	-- | Represents the situation in which a value @v@ was obtained without
 	-- problems.
@@ -81,9 +83,10 @@ instance (Semigroup e, Semigroup a) => Semigroup (Recover e a) where
 -- | Conditions the success of a @(a -> Recover a b)@ function to the success of
 -- a previous @Recover e a@ value.
 --
--- >>> (Success a) `ensure` f == f a
--- >>> (Recover e a) `ensure` (const Success ()) == Recover e ()
--- >>> (Failure e) `ensure` f == Failure e
+-- >>> (Success True) `ensure` (const (Success ()) == Success ()
+-- >>> (Recover [False] True) `ensure` (const Success ()) == Recover [False] ()
+-- >>> (Recover [False] True) `ensure` (const Recover [False] ()) == Recover [False,False] ()
+-- >>> (Failure [False]) `ensure` (const (Success ()) == Failure [False]
 ensure :: Semigroup e => Recover e a -> (a -> Recover e b) -> Recover e b
 ensure (Success a) f = case f a of
 	Failure e -> Failure e
