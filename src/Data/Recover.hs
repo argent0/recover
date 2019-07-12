@@ -1,6 +1,12 @@
 {-# LANGUAGE DeriveFunctor #-}
-module Data.Recover (
-	Recover (..)
+module Data.Recover
+	( Recover (..)
+	, ensure
+	, recover
+	, failFromEither
+	, recoverFromEither
+	, failFromMaybe
+	, recoverFromMaybe
 ) where
 
 import Data.Bifunctor (Bifunctor, bimap, first, second)
