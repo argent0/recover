@@ -25,7 +25,7 @@ import Data.Bifunctor (Bifunctor, bimap, first, second)
 --
 -- Unlike `Data.Validation`, `Recover` also has a constructor that represents
 -- the situation in which there were errors but a value could be nonetheless
--- obtained.
+-- obtained. All errors are still accumulated.
 --
 -- > Foo <$> (Recover e a) <*> (Success b) = Recover e (Foo a b)
 -- > Foo <$> (Recover e a) <*> (Recover ee b) = Recover (e <> ee) (Foo a b)
