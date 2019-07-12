@@ -2,9 +2,13 @@
 
 -- | A data type similar to 'Data.Validation' that recovers from errors.
 module Data.Recover
-	( Recover (..)
+	(
+	  -- * Data type
+	  Recover (..)
+	  -- * Sequencing
 	, ensure
 	, recover
+	  -- * Constructing from other types.
 	, failFromEither
 	, recoverFromEither
 	, failFromMaybe
@@ -80,13 +84,13 @@ instance (Semigroup e, Semigroup a) => Semigroup (Recover e a) where
 	Failure e <> Recover ee aa = Recover (e <> ee) aa
 	Failure e <> Failure ee = Failure (e <> ee)
 
--- | Conditions the success of a @(a -> Recover a b)@ function to the success of
--- a previous @Recover e a@ value.
+-- | Conditions the success of a @(a -> 'Recover' a b)@ function to the success of
+-- a previous @'Recover' e a@ value.
 --
--- >>> (Success True) `ensure` (const (Success ()) == Success ()
--- >>> (Recover [False] True) `ensure` (const Success ()) == Recover [False] ()
--- >>> (Recover [False] True) `ensure` (const Recover [False] ()) == Recover [False,False] ()
--- >>> (Failure [False]) `ensure` (const (Success ()) == Failure [False]
+-- >>> (Success True) `ensure` (const $ Success ()) == Success ()
+-- >>> (Recover [False] True) `ensure` (const $ Success ()) == Recover [False] ()
+-- >>> (Recover [False] True) `ensure` (const $ Recover [False] ()) == Recover [False,False] ()
+-- >>> (Failure [False]) `ensure` (const  $ Success ()) == Failure [False]
 ensure :: Semigroup e => Recover e a -> (a -> Recover e b) -> Recover e b
 ensure (Success a) f = case f a of
 	Failure e -> Failure e
@@ -98,7 +102,7 @@ ensure (Recover e a) f = case f a of
 	Success b -> Recover e b
 ensure (Failure e) _ = Failure e
 
--- | Recover with a value @Recover e a@ in case the second argument is 'Failure' e.
+-- | Recover with a value @'Recover' e a@ in case the second argument is @'Failure' e@.
 recover :: Semigroup e => a -> Recover e a -> Recover e a
 recover a (Failure e) = Recover e a
 recover _ v = v
@@ -108,7 +112,7 @@ failFromEither :: Semigroup e => Either e v -> Recover e v
 failFromEither (Left e) = Failure e
 failFromEither (Right v) = Success v
 
--- | Similar to 'failFromEither' but 'Left' e is 'Recover' e v.
+-- | Similar to 'failFromEither' but @'Left' e@ is @'Recover' e v@.
 recoverFromEither :: Semigroup e => v -> Either e v -> Recover e v
 recoverFromEither v = recover v . failFromEither
 
@@ -116,6 +120,6 @@ recoverFromEither v = recover v . failFromEither
 failFromMaybe :: Semigroup e => e -> Maybe v -> Recover e v
 failFromMaybe e = maybe (Failure e) Success
 
--- | Recover with @Recover e v@ in case of 'Nothing'
+-- | Recover with @'Recover' e v@ in case of 'Nothing'
 recoverFromMaybe :: Semigroup e => e -> v -> Maybe v -> Recover e v
 recoverFromMaybe e v = recover v . failFromMaybe e
