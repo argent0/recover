@@ -6,13 +6,17 @@ similar to `Data.These`, but with a different `Applicative` instance.
 Like `Data.Validation`, the `Applicative` instance of `Recover` enables the
 of validating various values while accumulating all the errors.
 
-> `Foo <$> (Success a) <*> (Success b) == Success (Foo a b)`
-> `Foo <$> (Failure e) <*> (Failure ee) == Failure (e <> ee)`
-> `Foo <$> (Success a) <*> (Failure ee) == Failure e`
+```{haskell}
+Foo <$> (Success a) <*> (Success b) == Success (Foo a b)
+Foo <$> (Failure e) <*> (Failure ee) == Failure (e <> ee)
+Foo <$> (Success a) <*> (Failure ee) == Failure e
+```
 
 Unlike `Data.Validation`, `Recover` also has a constructor that represents
 the situation in which there were errors but a value could be nonetheless
 obtained. All errors are still accumulated.
 
-> `Foo <$> (Recover e a) <*> (Success b) = Recover e (Foo a b)`
-> `Foo <$> (Recover e a) <*> (Recover ee b) = Recover (e <> ee) (Foo a b)`
+```{haskell}
+Foo <$> (Recover e a) <*> (Success b) = Recover e (Foo a b)
+Foo <$> (Recover e a) <*> (Recover ee b) = Recover (e <> ee) (Foo a b)
+```
